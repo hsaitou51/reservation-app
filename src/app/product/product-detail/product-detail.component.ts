@@ -1,21 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { products } from '../../products';
+import { ProductService } from '../shared/product.service';
 
 @Component({
   selector: 'app-product-detail',
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.scss']
 })
-export class ProductDetailComponent {
+export class ProductDetailComponent implements OnInit {
   product : any
-   constructor(private route: ActivatedRoute ) {}
+
+
+  constructor(
+    private route: ActivatedRoute,
+    private productService: ProductService
+     ) {}
    
-   ngOnInit(){
+   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      this.product = products[+params.get('productId')!]
+      const productObservable = this.productService.getProductById(params.get('productId')!)
+      productObservable.subscribe(
+        
+         (data) => { this.product = data },
+         (err) => { console.error( err );}
+      )
     })
-
+    console.log('subscribeから抜けました!')
+  }
    }
-
-}
+  
+    
